@@ -21,7 +21,7 @@ function Shell() {
 
 function shellInit() {
     var sc = null;
-    //
+	
     // Load the command list.
 
     // ver
