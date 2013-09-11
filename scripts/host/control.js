@@ -3,10 +3,7 @@
 
    Requires global.js.
    
-   Routines for the hardware simulation, NOT for our client OS itself. In this manner, it's A LITTLE BIT like a hypervisor,
-   in that the Document environment inside a browser is the "bare metal" (so to speak) for which we write code that
-   hosts our client OS. But that analogy only goes so far, and the lines are blurred, because we are using JavaScript in 
-   both the host and client environments.
+   Routines for the hardware simulation, NOT for our client OS itself. In this manner, it's A LITTLE BIT like a hypervisor, in that the Document environment inside a browser is the "bare metal" (so to speak) for which we write code that hosts our client OS. But that analogy only goes so far, and the lines are blurred, because we are using JavaScript in both the host and client environments.
    
    This (and other host/simulation scripts) is the only place that we should see "web" code, like 
    DOM manipulation and JavaScript event handling, and so on.  (Index.html is the only place for markup.)
@@ -34,7 +31,7 @@ function hostInit()
 	document.getElementById("taLog").value="";
 
 	// Set focus on the start button.
-   document.getElementById("btnStartOS").focus();
+    document.getElementById("btnStartOS").focus();
 
    // Check for our testing and enrichment core.
    if (typeof Glados === "function") {

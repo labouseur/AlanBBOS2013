@@ -79,6 +79,20 @@ function shellInit() {
     sc.description = "<string> - Sets the prompt.";
     sc.function = shellPrompt;
     this.commandList[this.commandList.length] = sc;
+	
+	// date - displays the current date and time
+	sc = new ShellCommand();
+	sc.command = "date";
+	sc.description = " - Displays the current date and time";
+	sc.function = shellTime;
+	this.commandList[this.commandList.length] = sc;
+	
+	// whereami - displays the user's current location
+	sc = new ShellCommand();
+	sc.command = "whereami"
+	sc.description = " - Displays the user's current location.";
+	sc.function = shellWAI;
+	this.commandlist[this.commandlist.length] = sc;
 
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
@@ -348,6 +362,11 @@ function shellRot13(args)
     {
         _StdIn.putText("Usage: rot13 <string>  Please supply a string.");
     }
+}
+
+function shellTime(args) {
+
+		_StdIn.putText(new Date().toLocaleString());
 }
 
 function shellPrompt(args)

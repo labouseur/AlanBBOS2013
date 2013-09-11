@@ -44,6 +44,22 @@ function CLIconsole() {
                // ... and reset our buffer.
                this.buffer = "";
            }
+		   // Check to see if it is a backspace.
+		   else if (chr == String.fromCharCode(8))
+		   {
+				// Remove the last character from the buffer
+				this.buffer = this.buffer.substr(0, this.buffer.length-1);
+				// Erase the prior character from the console.
+				//  ...by clearing the current line
+				_DrawingContext.clearRect(0, this.CurrentYPosition - this.CurrentFontSize, 
+								_Canvas.width, _DefaultFontSize + _FontHeightMargin);
+				// ...resetting the x position
+				this.CurrentXPosition = 0;
+				// ...writing the prompt
+				_OsShell.putPrompt()
+				// ...writing out the buffer
+				this.putText(this.buffer);
+		   }
            // TODO: Write a case for Ctrl-C.
            else
            {
@@ -66,7 +82,7 @@ function CLIconsole() {
        {
            // Draw the text at the current X and Y coordinates.
            _DrawingContext.drawText(this.CurrentFont, this.CurrentFontSize, this.CurrentXPosition, this.CurrentYPosition, text);
-         // Move the current X position.
+           // Move the current X position.
            var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
            this.CurrentXPosition = this.CurrentXPosition + offset;
        }
