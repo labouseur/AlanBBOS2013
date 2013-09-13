@@ -91,8 +91,8 @@ function shellInit() {
 	sc = new ShellCommand();
 	sc.command = "whereami"
 	sc.description = " - Displays the user's current location.";
-	sc.function = shellWAI;
-	this.commandlist[this.commandlist.length] = sc;
+	sc.function = null;
+	this.commandList[this.commandList.length] = sc;
 
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.

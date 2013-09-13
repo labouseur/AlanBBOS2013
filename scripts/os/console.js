@@ -47,18 +47,25 @@ function CLIconsole() {
 		   // Check to see if it is a backspace.
 		   else if (chr == String.fromCharCode(8))
 		   {
-				// Remove the last character from the buffer
-				this.buffer = this.buffer.substr(0, this.buffer.length-1);
-				// Erase the prior character from the console.
-				//  ...by clearing the current line
-				_DrawingContext.clearRect(0, this.CurrentYPosition - this.CurrentFontSize, 
-								_Canvas.width, _DefaultFontSize + _FontHeightMargin);
-				// ...resetting the x position
-				this.CurrentXPosition = 0;
-				// ...writing the prompt
-				_OsShell.putPrompt()
-				// ...writing out the buffer
-				this.putText(this.buffer);
+				// Check if there are any characters to backspace.
+				if (this.buffer.length > 0)
+				{
+					// Save the last char before removing it from the buffer.
+					var lastChar = this.buffer[this.buffer.length-1];
+					// Remove the char from the buffer.
+					this.buffer = this.buffer.substr(0, this.buffer.length-1);
+					// Calculate the width of the character to be deleted.
+					var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, lastChar);
+					// Move the "caret" back one character.
+					this.CurrentXPosition = this.CurrentXPosition - offset;
+					// Delete the character from the console.
+					_DrawingContext.clearRect(
+							this.CurrentXPosition, // x-coord 
+							this.CurrentYPosition - this.CurrentFontSize, // y-coord
+							offset, // width 
+							_DefaultFontSize + _FontHeightMargin // height
+						);
+				}					
 		   }
            // TODO: Write a case for Ctrl-C.
            else
