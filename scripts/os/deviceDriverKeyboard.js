@@ -46,7 +46,7 @@ function krnKbdDispatchKeyPress(params)
         }
         // TODO: Check for caps-lock and handle as shifted if so.
         _KernelInputQueue.enqueue(chr);        
-    }    
+    }
     else if ( ((keyCode >= 48) && (keyCode <= 57)) ||   // digits
 			   (keyCode == 32)                     ||   // space
                (keyCode == 13)                     ||   // enter
@@ -55,8 +55,12 @@ function krnKbdDispatchKeyPress(params)
         chr = String.fromCharCode(keyCode);
         _KernelInputQueue.enqueue(chr); 
     }
+	else if (keyCode == 38 || keyCode == 40) {
+		_KernelInputQueue.enqueue(keyCode);
+	}
 	// The mozilla keycodes for punctuation characters do not map directly to ASCII characters.
-	// Therefore, we must hard-code the characters when a non-ASCII keycode is generated.
+	// Therefore, we must translate the key codes corresponding to punctuation characters.
+	// For additional details regarding keypress events see http://unixpapa.com/js/key.html
 	else if ((keyCode == 59) && isShifted)  // colon
 		_KernelInputQueue.enqueue(':');
 	else if (keyCode == 59)				    // semicolon

@@ -32,10 +32,14 @@ h3 {
 
 #display {
 	background-color:#DFDBC3;
-	border: 2px solid red; 
+	border: 2px solid red;
 	cursor: default;
 }
 
+#statusBar {
+	background-color: black;
+	border: 2px solid red;
+}
 .normal_button {
 	width: 100px;
 }

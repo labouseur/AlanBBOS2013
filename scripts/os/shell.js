@@ -89,11 +89,18 @@ function shellInit() {
 	
 	// whereami - displays the user's current location
 	sc = new ShellCommand();
-	sc.command = "whereami"
+	sc.command = "whereami";
 	sc.description = " - Displays the user's current location.";
-	sc.function = null;
+	sc.function = shellUserLocation;
 	this.commandList[this.commandList.length] = sc;
 
+	// colors - allows the user to change the color of the console elements
+	sc = new ShellCommand();
+	sc.command = "theme";
+	sc.description = " - Sets the console theme."
+	sc.function = shellChangeTheme;
+	this.commandList[this.commandList.length] = sc;
+	
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
 
@@ -369,6 +376,21 @@ function shellTime(args) {
 		_StdIn.putText(new Date().toLocaleString());
 }
 
+var userLocations = [
+			"Your Happy Place", "The Library", "Your Happy Place in the Library",
+			"A Library in Your Happy Place", "Your Dorm", "At Aunt Marge's eating pie",
+			"Your Aunt Bertha's", "Mordor", "In a Dream", "Mallowland", "...within a Dream.", 
+			"Bagend", "Smithy's Castle", "A Good Place", "Over There", "A Bad Place", 
+			"Right Here", "In Your Head", "Get out", "In a Burning Building",
+			"Get out", "Now", "Gondor"
+	];
+
+function shellUserLocation() {
+	
+	var index = Math.floor((Math.random()*100)) % userLocations.length; 
+	_StdIn.putText("Your current location is: " + userLocations[index]);
+}
+
 function shellPrompt(args)
 {
     if (args.length > 0)
@@ -379,4 +401,51 @@ function shellPrompt(args)
     {
         _StdIn.putText("Usage: prompt <string>  Please supply a string.");
     }
+}
+
+function shellChangeTheme(args) {
+	
+	if (args.length == 0) 
+	{
+		_StdIn.putText("The current theme is " + _Console.CurrentTheme.name + ".");
+		_StdIn.advanceLine(); 
+		_StdIn.putText("Type \"theme list\" for a list of available themes.");
+	} 
+	else if (args.length == 1)
+	{
+		if (args[0] == "list") 
+		{	
+			
+			for (var i = 0; i < Themes.length; ++i) {
+				_StdIn.putText("  " + Themes[i].name + " - " + Themes[i].description);
+				_StdIn.advanceLine();
+			}
+			
+		}
+		else
+		{
+			
+			var userTheme = args[0];
+			
+			var found = false;
+			var index = 0;
+			
+			while (!found && (index < Themes.length)) {
+				if (Themes[index].name == userTheme) {
+					
+					_Console.setTheme(Themes[index]);
+					found = true;
+				}
+				++index;
+			}
+			
+			if (!found) {
+				_StdIn.putText("Invalid theme. Type \"theme list\" to see valid themes.");
+			}
+		}
+	}
+	else 
+	{
+		_StdIn.putText("Missing argument. Please supply a valid theme. Type \"theme list\" for valid themes.");
+	}
 }

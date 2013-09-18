@@ -36,6 +36,8 @@ var _DefaultFontFamily = "sans";  // Ignored, I think. The was just a place-hold
 var _DefaultFontSize = 13;
 var _FontHeightMargin = 4;        // Additional space added to font size when advancing a line.
 
+var _statusBar = null;			  // Initialized in hostInit();
+
 // Default the OS trace to be on.
 var _Trace = true;
 

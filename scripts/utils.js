@@ -35,8 +35,3 @@ function rot13(str) {   // An easy-to understand implementation of the famous an
     }
     return retVal;
 }
-
-// Returns the time (in milliseconds) from the UNIX epoch (1/1/1970)
-function time() {
-	return new Date().getTime();
-}

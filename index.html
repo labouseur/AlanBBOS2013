@@ -18,7 +18,8 @@
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    <script type="text/javascript" src="scripts/os/interrupt.js"></script>
-   <script type="text/javascript" src="scripts/os/canvastext.js"></script>	
+   <script type="text/javascript" src="scripts/os/canvastext.js"></script>
+   <script type="text/javascript" src="scripts/os/themes.js"></script>
    <script type="text/javascript" src="scripts/os/console.js"></script>	
    <script type="text/javascript" src="scripts/os/deviceDriver.js"></script>
    <script type="text/javascript" src="scripts/os/deviceDriverKeyboard.js"></script>
@@ -63,13 +64,15 @@
              onclick="hostBtnReset_click(this);">
    </div>
 
-   <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
+   <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left">
       <canvas id="display"
               width="500px"
               height="500px"
               tabindex="3">
       </canvas>
    </div>
+	
+ </div>
 
    <div id="divLog" style="margin-left:520px;">
       <label>
@@ -94,6 +97,14 @@
          ></textarea>
       </label>
    </div>
+   
+   <div id="divStatusBar" style="width:500px; height:25px; margin-left:4px; position:relative; top:-120px">
+	  <canvas id="statusBar"
+			  width="500px"
+			  height="25px"
+			  tabindex="4">
+	  </canvas>
+	</div>
 
 </div>
 

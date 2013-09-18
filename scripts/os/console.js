@@ -8,12 +8,16 @@
    ------------ */
 
 function CLIconsole() {
-    // Properties
+    
+	// Properties
     this.CurrentFont      = _DefaultFontFamily;
     this.CurrentFontSize  = _DefaultFontSize;
     this.CurrentXPosition = 0;
     this.CurrentYPosition = _DefaultFontSize;
-    this.buffer = "";
+    this.CurrentTheme = Themes[0];
+	this.buffer = "";
+	this.history = new Stack();
+	
     
     // Methods
     this.init = function() {
@@ -39,7 +43,13 @@ function CLIconsole() {
            if (chr == String.fromCharCode(13))  //     Enter key
            {
                // The enter key marks the end of a console command, so ...
-               // ... tell the shell ...
+			   
+			   // ... store the command in the command history ...
+			   if (this.buffer != this.history.peek()) // first check if this command is the same as the last command
+			   {
+					this.history.push(this.buffer); // if it isn't then add it to the history list
+			   }
+			   // ... tell the shell ...
                _OsShell.handleInput(this.buffer);
                // ... and reset our buffer.
                this.buffer = "";
@@ -66,6 +76,46 @@ function CLIconsole() {
 							_DefaultFontSize + _FontHeightMargin // height
 						);
 				}					
+		   }
+		   // Check if this is an up arrow
+		   else if (chr == '38')
+		   {
+				// check if there is any command history
+				if (this.history.isEmpty()) 
+				{
+					// erase the entire buffer and console
+					// Calculate the width of the characters to be deleted.
+					var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, this.buffer);
+					// Move the "caret" back to the beginning of the prompt.
+					this.CurrentXPosition = this.CurrentXPosition - offset;
+					// Delete the characters from the console.
+					_DrawingContext.clearRect(
+							this.CurrentXPosition, // x-coord 
+							this.CurrentYPosition - this.CurrentFontSize, // y-coord
+							offset, // width 
+							_DefaultFontSize + _FontHeightMargin // height
+						);
+					// Clear the command from the buffer
+					this.buffer = "";
+					
+					// write the current command to the console
+					_StdIn.putText(this.CommandHistory[this.CurrentCommandIndex]);
+					
+					// write the current command to the buffer
+					this.buffer += this.CommandHistory[this.CurrentCommandIndex];
+					
+					// decrement the history index
+					if (this.CurrentCommandIndex > 0)
+					{
+						this.CurrentCommandIndex--;
+					}
+				}
+		   }
+		   else if (chr == '40')
+		   {
+				// check if there is any command history
+				// erase the entire buffer and console
+				// write the current command to the buffer and to the console
 		   }
            // TODO: Write a case for Ctrl-C.
            else
@@ -100,4 +150,16 @@ function CLIconsole() {
        this.CurrentYPosition += _DefaultFontSize + _FontHeightMargin;
        // TODO: Handle scrolling.
     };
+	
+	this.setTheme = function(theme) {
+		
+		_Canvas.style.backgroundColor = theme.background;
+		_DrawingContext.strokeStyle = theme.text;
+		
+		this.CurrentTheme = theme;
+		
+		this.clearScreen();
+		this.resetXY();
+		
+	}
 }
