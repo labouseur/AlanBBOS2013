@@ -1,10 +1,10 @@
-/* ------------  
+/* ------------
    Globals.js
 
    Global CONSTANTS and _Variables.
    (Global over both the OS and Hardware Simulation / Host.)
-   
-   This code references page numbers in the text book: 
+
+   This code references page numbers in the text book:
    Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
    ------------ */
 
@@ -18,7 +18,7 @@ var CPU_CLOCK_INTERVAL = 100;   // This is in ms, or milliseconds, so 1000 = 1 s
 
 var TIMER_IRQ = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
                     // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
-var KEYBOARD_IRQ = 1;  
+var KEYBOARD_IRQ = 1;
 
 
 //
@@ -37,6 +37,7 @@ var _DefaultFontSize = 13;
 var _FontHeightMargin = 4;        // Additional space added to font size when advancing a line.
 
 var _statusBar = null;			  // Initialized in hostInit();
+var _userInputArea = null;		  // Initialized in hostInit();
 
 // Default the OS trace to be on.
 var _Trace = true;
