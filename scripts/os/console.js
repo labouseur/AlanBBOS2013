@@ -14,15 +14,17 @@ function CLIconsole() {
     this.CurrentFontSize  = _DefaultFontSize;
     this.CurrentXPosition = 0;
     this.CurrentYPosition = _DefaultFontSize;
+	this.LineHeight = _DefaultFontSize + _FontHeightMargin;
     this.CurrentTheme = Themes[0];
 	this.buffer = "";
-	this.history = new HistoryList();
+	this.history = null;
 
 
     // Methods
     this.init = function() {
        this.clearScreen();
        this.resetXY();
+	   this.history = new HistoryList();
     };
 
     this.clearScreen = function() {
@@ -33,6 +35,43 @@ function CLIconsole() {
        this.CurrentXPosition = 0;
        this.CurrentYPosition = this.CurrentFontSize;
     };
+	
+	/* Scroll the display the specified number of lines. */
+	this.scrollDisplay = function(n=1) {
+		// Calculate the vertical scroll amount.
+		var scrollY = this.LineHeight * n;
+		// Save the required portion of the display.
+		var saved = _DrawingContext.getImageData(
+				0, // x-coord of the origin
+				scrollY, // y-coord of the origin
+				500, // image width
+				this.CurrentYPosition - scrollY // image height
+		);
+		// Clear the screen.
+		this.clearScreen();
+		// "Scroll" up by drawing the image at the top of the screen.
+		_DrawingContext.putImageData(saved, 0, 0);
+		// Place the cursor at the correct position.
+		this.CurrentYPosition -= scrollY;
+	};
+	
+	/* Clear user input from the console and buffer. */
+	this.clearUserInput = function() {
+		// erase the entire buffer and console
+		// Calculate the width of the characters to be deleted.
+		var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, this.buffer);
+		// Move the "caret" back to the beginning of the prompt.
+		this.CurrentXPosition = this.CurrentXPosition - offset;
+		// Delete the characters from the console.
+		_DrawingContext.clearRect(
+				this.CurrentXPosition, // x-coord
+				this.CurrentYPosition - this.CurrentFontSize, // y-coord
+				offset, // width
+				_DefaultFontSize + _FontHeightMargin // height
+			);
+		// Clear the command from the buffer
+		this.buffer = "";
+	};
 
     this.handleInput = function() {
        while (_KernelInputQueue.getSize() > 0)
@@ -76,42 +115,23 @@ function CLIconsole() {
 		   // Check if this is an up arrow
 		   else if (chr == '38')
 		   {
-				// check if there is any command history
-				if (this.history.isEmpty())
-				{
-					// erase the entire buffer and console
-					// Calculate the width of the characters to be deleted.
-					var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, this.buffer);
-					// Move the "caret" back to the beginning of the prompt.
-					this.CurrentXPosition = this.CurrentXPosition - offset;
-					// Delete the characters from the console.
-					_DrawingContext.clearRect(
-							this.CurrentXPosition, // x-coord
-							this.CurrentYPosition - this.CurrentFontSize, // y-coord
-							offset, // width
-							_DefaultFontSize + _FontHeightMargin // height
-						);
-					// Clear the command from the buffer
-					this.buffer = "";
-
-					// write the current command to the console
-					_StdIn.putText(this.CommandHistory[this.CurrentCommandIndex]);
-
-					// write the current command to the buffer
-					this.buffer += this.CommandHistory[this.CurrentCommandIndex];
-
-					// decrement the history index
-					if (this.CurrentCommandIndex > 0)
-					{
-						this.CurrentCommandIndex--;
-					}
-				}
+				this.clearUserInput();
+				// Get the saved command from the history list.
+				var cmd = this.history.searchUp();
+				// write the current command to the console
+				_StdIn.putText(cmd);
+				// write the current command to the buffer
+				this.buffer = cmd;
 		   }
 		   else if (chr == '40')
 		   {
-				// check if there is any command history
-				// erase the entire buffer and console
-				// write the current command to the buffer and to the console
+				this.clearUserInput();
+				// Get the saved command from the history list.
+				var cmd = this.history.searchDown();
+				// write the current command to the console
+				_StdIn.putText(cmd);
+				// write the current command to the buffer
+				this.buffer = cmd;
 		   }
            // TODO: Write a case for Ctrl-C.
            else
@@ -142,9 +162,13 @@ function CLIconsole() {
     };
 
     this.advanceLine = function() {
-       this.CurrentXPosition = 0;
+       
+	   this.CurrentXPosition = 0;
        this.CurrentYPosition += _DefaultFontSize + _FontHeightMargin;
-       // TODO: Handle scrolling.
+	   
+	   if (this.CurrentYPosition > 500) {
+			this.scrollDisplay();
+	   }
     };
 
 	this.setTheme = function(theme) {
@@ -157,5 +181,5 @@ function CLIconsole() {
 		this.clearScreen();
 		this.resetXY();
 
-	}
+	};
 }

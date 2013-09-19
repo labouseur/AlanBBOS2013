@@ -67,6 +67,7 @@ function HistoryList() {
 		//   There is no reason to have the same command listed twice in a row.
 		if (this.cmdList[this.cmdList.length-1] != cmd) {
 			this.cmdList.push(cmd);
+			this.currentPtr = this.cmdList.length-1;
 		}
 	}
 
@@ -74,30 +75,29 @@ function HistoryList() {
 		// Check if there are any commands in the history.
 		if (this.cmdList.length == 0) {
 			return "";
-		// Check if the user already reached the end of the command history.
-		} else if (this.currentPtr < 0) {
-			return "";
-		// Return the current command
 		} else {
+			// Return the current command
 			var retVal = this.cmdList[this.currentPtr];
-			this.currentPtr -= 1;
+			// Move the history pointer to the left
+			//  unless it is already at the beginning.
+			if (this.currentPtr != 0) {
+				this.currentPtr -= 1;
+			}
 			return retVal;
 		}
-
-	}
+	};
 
 	this.searchDown = function() {
 		if (this.cmdList.length == 0) {
 			return "";
-		} else if (this.currentPtr >= this.cmdList.length) {
-			return "";
-		} else if (this.currentPtr == -1) {
-			this.currentPtr += 1;
-			return this.cmdList[this.currentPtr];
 		} else {
 			var retVal = this.cmdList[this.currentPtr];
-			this.currentPtr += 1;
+			// Move the history pointer to the left
+			//  unless it is already at the end.
+			if (this.currentPtr != this.cmdList.length-1) {
+				this.currentPtr += 1;
+			}
 			return retVal;
 		}
-	}
+	};
 }
