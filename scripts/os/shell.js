@@ -1,6 +1,6 @@
 /* ------------
    Shell.js
-   
+
    The OS Shell - The "command line interface" (CLI) for the console.
    ------------ */
 
@@ -21,7 +21,7 @@ function Shell() {
 
 function shellInit() {
     var sc = null;
-    //
+
     // Load the command list.
 
     // ver
@@ -30,14 +30,14 @@ function shellInit() {
     sc.description = "- Displays the current version data.";
     sc.function = shellVer;
     this.commandList[this.commandList.length] = sc;
-    
+
     // help
     sc = new ShellCommand();
     sc.command = "help";
     sc.description = "- This is the help command. Seek help.";
     sc.function = shellHelp;
     this.commandList[this.commandList.length] = sc;
-    
+
     // shutdown
     sc = new ShellCommand();
     sc.command = "shutdown";
@@ -58,7 +58,7 @@ function shellInit() {
     sc.description = "<topic> - Displays the MANual page for <topic>.";
     sc.function = shellMan;
     this.commandList[this.commandList.length] = sc;
-    
+
     // trace <on | off>
     sc = new ShellCommand();
     sc.command = "trace";
@@ -80,6 +80,34 @@ function shellInit() {
     sc.function = shellPrompt;
     this.commandList[this.commandList.length] = sc;
 
+	// date - displays the current date and time
+	sc = new ShellCommand();
+	sc.command = "date";
+	sc.description = " - Displays the current date and time";
+	sc.function = shellTime;
+	this.commandList[this.commandList.length] = sc;
+
+	// whereami - displays the user's current location
+	sc = new ShellCommand();
+	sc.command = "whereami";
+	sc.description = " - Displays the user's current location.";
+	sc.function = shellUserLocation;
+	this.commandList[this.commandList.length] = sc;
+
+	// theme - allows the user to change the color of the console elements
+	sc = new ShellCommand();
+	sc.command = "theme";
+	sc.description = " - Sets the console theme."
+	sc.function = shellChangeTheme;
+	this.commandList[this.commandList.length] = sc;
+
+	// load - validates the code in the user program input area
+	sc = new ShellCommand();
+	sc.command = "load";
+	sc.description = " - Validates the user code in the program input area.";
+	sc.function = shellValidateCode;
+	this.commandList[this.commandList.length] = sc;
+
     // processes - list the running processes and their IDs
     // kill <id> - kills the specified process id.
 
@@ -96,7 +124,7 @@ function shellPutPrompt()
 function shellHandleInput(buffer)
 {
     krnTrace("Shell Command~" + buffer);
-    // 
+    //
     // Parse the input...
     //
     var userCommand = new UserCommand();
@@ -194,7 +222,7 @@ function shellExecute(fn, args)
 
 
 //
-// The rest of these functions ARE NOT part of the Shell "class" (prototype, more accurately), 
+// The rest of these functions ARE NOT part of the Shell "class" (prototype, more accurately),
 // as they are not denoted in the constructor.  The idea is that you cannot execute them from
 // elsewhere as shell.xxx .  In a better world, and a more perfect JavaScript, we'd be
 // able to make then private.  (Actually, we can. have a look at Crockford's stuff and Resig's JavaScript Ninja cook.)
@@ -203,7 +231,7 @@ function shellExecute(fn, args)
 //
 // An "interior" or "private" class (prototype) used only inside Shell() (we hope).
 //
-function ShellCommand()     
+function ShellCommand()
 {
     // Properties
     this.command = "";
@@ -258,7 +286,7 @@ function shellApology()
 
 function shellVer(args)
 {
-    _StdIn.putText(APP_NAME + " version " + APP_VERSION);    
+    _StdIn.putText(APP_NAME + " version " + APP_VERSION);
 }
 
 function shellHelp(args)
@@ -268,14 +296,14 @@ function shellHelp(args)
     {
         _StdIn.advanceLine();
         _StdIn.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
-    }    
+    }
 }
 
 function shellShutdown(args)
 {
      _StdIn.putText("Shutting down...");
      // Call Kernel shutdown routine.
-    krnShutdown();   
+    krnShutdown();
     // TODO: Stop the final prompt from being displayed.  If possible.  Not a high priority.  (Damn OCD!)
 }
 
@@ -292,12 +320,12 @@ function shellMan(args)
         var topic = args[0];
         switch (topic)
         {
-            case "help": 
+            case "help":
                 _StdIn.putText("Help displays a list of (hopefully) valid commands.");
                 break;
             default:
                 _StdIn.putText("No manual entry for " + args[0] + ".");
-        }        
+        }
     }
     else
     {
@@ -312,7 +340,7 @@ function shellTrace(args)
         var setting = args[0];
         switch (setting)
         {
-            case "on": 
+            case "on":
                 if (_Trace && _SarcasticMode)
                 {
                     _StdIn.putText("Trace is already on, dumbass.");
@@ -322,15 +350,15 @@ function shellTrace(args)
                     _Trace = true;
                     _StdIn.putText("Trace ON");
                 }
-                
+
                 break;
-            case "off": 
+            case "off":
                 _Trace = false;
-                _StdIn.putText("Trace OFF");                
-                break;                
+                _StdIn.putText("Trace OFF");
+                break;
             default:
                 _StdIn.putText("Invalid arguement.  Usage: trace <on | off>.");
-        }        
+        }
     }
     else
     {
@@ -350,14 +378,105 @@ function shellRot13(args)
     }
 }
 
+function shellTime(args) {
+
+		_StdIn.putText(new Date().toLocaleString());
+}
+
+var userLocations = [
+			"Your Happy Place", "The Library", "Your Happy Place in the Library",
+			"A Library in Your Happy Place", "Your Dorm", "At Aunt Marge's eating pie",
+			"Your Aunt Bertha's", "Mordor", "In a Dream", "Mallowland", "...within a Dream.",
+			"Bagend", "Smithy's Castle", "A Good Place", "Over There", "A Bad Place",
+			"Right Here", "In Your Head", "Get out", "In a Burning Building",
+			"Get out", "Now", "Gondor"
+	];
+
+function shellUserLocation() {
+	// Generate an index into the locations array.
+	var index = Math.floor((Math.random()*100)) % userLocations.length;
+	// Output the users's location.
+	_StdIn.putText("Your current location is: " + userLocations[index]);
+}
+
 function shellPrompt(args)
 {
-    if (args.length > 0)
-    {
+    if (args.length > 0) {
         _OsShell.promptStr = args[0];
-    }
-    else
-    {
+    } else {
         _StdIn.putText("Usage: prompt <string>  Please supply a string.");
     }
+}
+
+function shellChangeTheme(args) {
+
+	// If the user provided no args then simply output the current theme.
+	if (args.length == 0) {
+		_StdIn.putText("The current theme is " + _Console.CurrentTheme.name + ".");
+		_StdIn.advanceLine();
+		_StdIn.putText("Type \"theme list\" for a list of available themes.");
+	} else if (args.length == 1) {
+		// Present the user with a list of available themes.
+		if (args[0] == "list") {
+
+			for (var i = 0; i < Themes.length; ++i) {
+				_StdIn.putText("  " + Themes[i].name + " - " + Themes[i].description);
+				_StdIn.advanceLine();
+			}
+
+		} else {
+
+			var userTheme = args[0];
+			// initialize the loop variables
+			var found = false;
+			var index = 0;
+			// Loop until the theme is found or until there are no themes left to check.
+			while (!found && (index < Themes.length)) {
+				if (Themes[index].name == userTheme) {
+					_Console.setTheme(Themes[index]);
+					found = true;
+				}
+				index += 1;
+			}
+			// If no theme was found then inform the user.
+			if (!found) {
+				_StdIn.putText("Invalid theme. Type \"theme list\" to see valid themes.");
+			}
+		}
+	} else {
+		_StdIn.putText("Invalid argument list length. Please supply a valid theme. Type \"theme list\" for valid themes.");
+	}
+}
+
+function shellValidateCode() {
+
+	// Get the program code and split it into an array of characters.
+	var tokens = _userInputArea.value.trim().split("");
+
+	// Build the regex.
+	var regex = new RegExp("([A-F]|[0-9]| )", "i");
+
+	// Initialize loop variables.
+	var valid = true;
+	var index = 0;
+	// loop until there are no more characters or an invalid character is found.
+	while(valid && index < tokens.length) {
+
+		if (!regex.test(tokens[index])) {
+			valid = false;
+		} else {
+			index += 1;
+		}
+	}
+
+	// Inform the user of the results.
+	if (!valid) {
+		_StdIn.putText("  Invalid token found in program.");
+		_StdIn.advanceLine();
+		_StdIn.putText("  Program should contain only spaces and HEX characters.");
+	} else {
+		_StdIn.putText("  Your program is valid. Good Job.");
+		_StdIn.advanceLine();
+		_StdIn.putText("  Whether it is correct remains to be seen.");
+	}
 }

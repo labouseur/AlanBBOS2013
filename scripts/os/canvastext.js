@@ -10,6 +10,8 @@
  *  - fixed comma
  *  - added semi-colon.
  *
+ * Modifications by Joseph R. Muro.
+ *	- modififed the draw function to prevent the strokeStyle property from being overridden
  * ----------------- */
 
 var CanvasTextFunctions = { };
@@ -153,7 +155,7 @@ CanvasTextFunctions.draw = function(ctx,font,size,x,y,str)
     ctx.save();
     ctx.lineCap = "round";
     ctx.lineWidth = 2.0 * mag;
-	ctx.strokeStyle = "black";
+	//ctx.strokeStyle = "black";
 
     for (var i = 0; i < len; i++) 
 	{
